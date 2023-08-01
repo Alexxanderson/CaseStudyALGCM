@@ -1,56 +1,36 @@
-import pygame
+# imports tkinter
+from tkinter import *
+
+
+def create_window():
+    window = Tk()
+    window.title("1-way 1-stack Deterministic Pushdown Automata")
+    window.geometry("864x640")
+
+    label1 = Label(window, text="Label 1")
+    label2 = Label(window, text="Label 2")
+    button = Button(window, text="Click Me!")
+
+    file_button = Button(window, text="File")
+    input_button = Button(window, text="Input")
+
+    attribute_editor_button = Button(window, text="Edit")
+    add_state_button = Button(window, text="Add State")
+    add_transition_button = Button(window, text="Add Transition")
+    remove_state_button = Button(window, text="Remover")
+
+    file_button.grid(row = 0, column = 0)
+    input_button.grid(row = 0, column = 1)
+
+    button.grid(row=1, column=0, columnspan=2, sticky="we")
+    window.mainloop()
 
 
 def main():
-    # read txt file and print 2d maze grid
     print("Yo")
-    # Initialize Pygame
-    pygame.init()
-
-    # Define the dimensions of the window
-    window_width = 800
-    window_height = 600
-
-    # Create the window
-    window = pygame.display.set_mode((window_width, window_height))
-    pygame.display.set_caption("1-Way 1-Stack Deterministic Pushdown Automata")
-
-    # Colors
-    WHITE = (255, 255, 255)
-    BLACK = (0, 0, 0)
-
-    circles = []
-
-    # Flag for "adding mode"
-    adding_mode = False
-
-    # Game loop
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                # Add a circle's position when the mouse is clicked
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                circles.append((mouse_x, mouse_y))
-
-
-        # Fill the window with a color (white in this case)
-        window.fill(WHITE)
-
-        # Draw all circles on the window
-        for circle_pos in circles:
-            pygame.draw.circle(window, BLACK, circle_pos, 20)  # Draw a circle with radius 20
-
-        # Update the display
-        pygame.display.flip()
-
-    # Quit Pygame
-    pygame.quit()
+    create_window()
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     main()
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
