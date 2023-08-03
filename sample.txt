@@ -1,0 +1,29 @@
+States:
+state1
+state2
+state3
+
+Alphabet Inputs:
+a
+b
+c
+
+Stack Alphabets:
+X
+Y
+Z
+
+Start State:
+state1
+
+Starting Stack Symbol:
+$
+
+Final States:
+state2
+state3
+
+Transitions:
+state1,a,X,state2,Y
+state1,b,Y,state1,Z
+state2,c,Z,state3,Y
