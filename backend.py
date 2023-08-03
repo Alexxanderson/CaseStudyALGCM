@@ -1,65 +1,60 @@
-class DPDA:
-    def __init__(self):
-        self.stack = []
-        self.transitions = {}
-        self.current_state = None
+import tkinter as tk
+from tkinter import filedialog
 
-    def add_transition(self, state, input_symbol, stack_symbol, next_state, push_to_stack):
-        key = (state, input_symbol, stack_symbol)
-        self.transitions[key] = (next_state, push_to_stack)
-
-    def initialize(self, start_state, start_stack_symbol):
-        self.current_state = start_state
-        self.stack = [start_stack_symbol]
-
-    def process_input(self, input_string):
-        for symbol in input_string:
-            if self.current_state is None:
-                return False
-            stack_top = self.stack[-1] if self.stack else None
-            key = (self.current_state, symbol, stack_top)
-            if key not in self.transitions:
-                return False
-            next_state, push_to_stack = self.transitions[key]
-            if push_to_stack != '':
-                self.stack.append(push_to_stack)
-            self.current_state = next_state
-
-        if self.current_state is None:
-            return False
-
-        while self.stack:
-            stack_top = self.stack.pop()
-            key = (self.current_state, '', stack_top)
-            if key not in self.transitions:
-                return False
-            self.current_state, _ = self.transitions[key]
-
-        return self.current_state == 'accept'
+root = tk.Tk()
+root.withdraw()
 
 
-# Example usage:
-dpda = DPDA()
+def readfile():
+    print("reading file")
+    filename = filedialog.askopenfilename()
+    with open(filename, 'r') as file:
+        file_data = {}
+        current_section = None
 
-# Define states and symbols
-dpda_states = {'q0', 'q1', 'q2', 'accept'}
-input_symbols = {'a', 'b'}
-stack_symbols = {'Z', 'A'}
+        for line in file:
+            line = line.strip()
 
-# Add transitions
-dpda.add_transition('q0', 'a', 'Z', 'q1', 'A')  # Transition: q0 --a, Z/A--> q1
-dpda.add_transition('q1', 'a', 'A', 'q1', 'A')  # Transition: q1 --a, A/A--> q1
-dpda.add_transition('q1', 'b', 'A', 'q2', '')   # Transition: q1 --b, A/ε--> q2
-dpda.add_transition('q2', 'b', 'A', 'q2', '')   # Transition: q2 --b, A/ε--> q2
-dpda.add_transition('q2', '', 'Z', 'accept', '')  # Transition: q2 --ε, Z/ε--> accept
+            if line == '':
+                continue
 
-# Initialize the DPDA
-dpda.initialize('q0', 'Z')
+            if line.endswith(':'):
+                current_section = line[:-1]
+                file_data[current_section] = []
+            else:
+                file_data[current_section].append(line)
 
-# Test some strings
-test_strings = ['aabb', 'aaabb', 'ab', 'aabbb']
-for string in test_strings:
-    if dpda.process_input(string):
-        print(f'String "{string}" is accepted.')
-    else:
-        print(f'String "{string}" is not accepted.')
+    return file_data
+
+
+def main():
+    print("1-Stack 1-Way DPDA")
+
+    print("Please read file")
+    dpdaFile_data = readfile()
+
+    states = dpdaFile_data['States']
+    alphabet_inputs = dpdaFile_data['Alphabet Inputs']
+    stack_alphabets = dpdaFile_data['Stack Alphabets']
+    start_state = dpdaFile_data['Start State']
+    starting_stack_symbol = dpdaFile_data['Starting Stack Symbol']
+    final_states = dpdaFile_data['Final States']
+    transitions = dpdaFile_data['Transitions']
+
+    print("File Read")
+
+    print("States:", states)
+    print("Alphabet Inputs:", alphabet_inputs)
+    print("Stack Alphabets:", stack_alphabets)
+    print("Start State:", start_state)
+    print("Starting Stack Symbol:", starting_stack_symbol)
+    print("Final States:", final_states)
+    print("Transitions:", transitions)
+
+    input_string = input("Input String to be read: ")
+    print(input_string)
+
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    main()
