@@ -1,12 +1,10 @@
 States:
 q0
 q1
-q2
 
 Alphabet Inputs:
 a
 b
-c
 
 Stack Alphabets:
 X

@@ -1,9 +1,15 @@
+# STALGCM CASE-STUDY S11 (DETERMINISTIC PUSHDOWN AUTOMATA)
+# Bien Aaron Miranda
+# Dominic Luis Baccay
+# Luis Miguel Rana
+
 # imports tkinter
 from tkinter import *
 from tkinter import filedialog
 
 window = Tk()
 
+# Global Variables
 dpdaFile_data = ""
 dpda_Machine = ""
 
@@ -11,18 +17,21 @@ dpda_Machine = ""
 ###########################################################################
 #                 BACKEND
 ###########################################################################
+
+# 1-way 1-Stack Deterministic Pushdown Automata Class
 class dpda_machine:
     def __init__(self, states, alphabet, stack_alphabet, transitions, start_state, start_stack_symbol, accept_states):
-        self.current_state = None
-        self.stack = None
-        self.states = states
-        self.alphabet = alphabet
-        self.stack_alphabet = stack_alphabet
-        self.transitions = transitions
-        self.start_state = start_state
-        self.start_stack_symbol = start_stack_symbol
-        self.accept_states = accept_states
+        self.current_state = None  # Current State, utilized on process
+        self.stack = None  # Current Stack, utilized on process
+        self.states = states  # Set of Possible States
+        self.alphabet = alphabet  # Set of input alphabets
+        self.stack_alphabet = stack_alphabet  # Set of stack alphabet
+        self.transitions = transitions  # Set of Transitions
+        self.start_state = start_state  # Start State
+        self.start_stack_symbol = start_stack_symbol  # Starting Stack Symbol
+        self.accept_states = accept_states  # Final state
 
+    # Processes the string of input and outputs if it is accepted or rejected based on the DPDA Design
     def process_input(self, input_string, tracing_text, currentState_Label, steps_Label, traceInput_Label, stack_Label,
                       time_step):
 
@@ -40,32 +49,6 @@ class dpda_machine:
         steps_Label.config(text=i)
         stack_Label.config(text=f"{self.stack}")
         traceInput_Label.config(text=f"{string_to_show}")
-
-        # for symbol in input_string:
-        #     print(symbol)
-        #     # print("Stack: ", self.stack)
-        #     if self.current_state is None:
-        #         return False
-        #     stack_top = self.stack[-1] if self.stack else None
-        #     key = (self.current_state, symbol, stack_top)
-        #     # print("key and stack top", key, " ", stack_top)
-        #
-        #     if key not in self.transitions:
-        #         return False
-        #     next_state, push_to_stack = self.transitions[key]
-        #
-        #     self.stack.pop()
-        #     if push_to_stack != '':
-        #         for to_append in push_to_stack:
-        #             self.stack.append(to_append)
-        #     self.current_state = next_state
-        #
-        #     print("last check: current state ", self.current_state, "accept state: ", self.accept_states)
-        #     print("stack: ", self.stack)
-        #     tracing_text.insert(END, f"State: {self.current_state}, Input: {symbol} Stack on Top: {stack_top}\n")
-        #     currentState_Label.config(text=self.current_state)
-        #     steps_Label.config(text=i)
-        #     stack_Label.config(text=f"{self.stack}")
 
         def process_loop():
             nonlocal i, time_step, string_to_show
@@ -95,7 +78,7 @@ class dpda_machine:
             string_to_show = input_string[i:]
             tracing_text.insert(END, f"State: {self.current_state}, Input: {symbol}, Stack on Top: {stack_top}\n")
             currentState_Label.config(text=self.current_state)
-            steps_Label.config(text=i)
+            steps_Label.config(text=(i + 1))
             stack_Label.config(text=f"{self.stack}")
             traceInput_Label.config(text=f"{string_to_show}")
 
@@ -109,12 +92,8 @@ class dpda_machine:
         # Start the processing loop
         process_loop()
 
-        # if self.current_state == self.accept_states:
-        #     return True
-        # else:
-        #     return False
 
-
+# Function used to instantiate the DPDA design based from the processed .txt file
 def process_file_to_DPDA(dpda_data):
     states = set(dpda_data['States'])
     alphabet_inputs = set(dpda_data['Alphabet Inputs'])
@@ -122,9 +101,7 @@ def process_file_to_DPDA(dpda_data):
     start_state = dpda_data['Start State'][0]
     starting_stack_symbol = dpda_data['Starting Stack Symbol'][0]
     final_state = dpda_data['Final States'][0]
-    transitionsRaw_list = dpda_data['Transitions']  # DONT REMOVE PROBABLY WILL BE USEFUL FOR FRONTEND
-
-    # print(transitionsRaw_list)
+    transitionsRaw_list = dpda_data['Transitions']
 
     transitions = {}
     # Iterate through each string in the input list
@@ -134,8 +111,6 @@ def process_file_to_DPDA(dpda_data):
 
         key = (q_from, symbol_read, top_stack)
         transitions[key] = (q_to, stack_write)
-
-    print("File Read")
 
     print("States:", states, type(states))
     print("Alphabet Inputs:", alphabet_inputs)
@@ -155,6 +130,7 @@ def process_file_to_DPDA(dpda_data):
 #                 BUTTON FUNCTIONS
 ###########################################################################
 
+# Reads a .txt file and processes it to a data variable that is convertible into a DPDA design
 def openFile(machine_text):
     print("Open File Button Clicked!")
     print("reading file")
@@ -200,6 +176,7 @@ def openFile(machine_text):
     machine_text.insert(1.0, text_to_insert)
 
 
+# Processes the input at full speed
 def run_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text, stack_Label):
     print("Run button clicked!")
 
@@ -209,17 +186,9 @@ def run_action(input_box, currentState_Label, steps_Label, traceInput_Label, tra
 
     dpda_Machine.process_input(input_string_for_process, tracing_text, currentState_Label, steps_Label,
                                traceInput_Label, stack_Label, 0)
-    #     print(f'String "{input_string}" is accepted.')
-    #     tracing_text.insert(END, f'String "{input_string}" is accepted. \n')
-    # else:
-    #     print(f'String "{input_string}" is not accepted.')
-    #     tracing_text.insert(END, f'String "{input_string}" is not accepted. \n')
 
 
-def pause_action():
-    print("Pause button clicked!")
-
-
+# Processes the input at a slower speed
 def step_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text, stack_Label):
     print("Step button clicked!")
 
@@ -227,10 +196,12 @@ def step_action(input_box, currentState_Label, steps_Label, traceInput_Label, tr
     input_string_for_process = input_string + " "
     print(input_string)
 
+    # 1000 represents the time of delay
     dpda_Machine.process_input(input_string_for_process, tracing_text, currentState_Label, steps_Label,
                                traceInput_Label, stack_Label, 1000)
 
 
+# Resets the content of input box, tracing text, current state, steps, trace input, and current stack
 def reset_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text, stack_Label):
     print("Reset button clicked!")
     if input_box.get().strip():
@@ -243,19 +214,18 @@ def reset_action(input_box, currentState_Label, steps_Label, traceInput_Label, t
     stack_Label.config(text="")
 
 
-# def enter_action():
-#     print("Enter Button Clicked!")
-
-
 ###########################################################################
 #                 FRONTEND
 ###########################################################################
+
+# The parent frontend window that shows all buttons and information needed to show
 def create_window():
-    input_string = StringVar()
+    input_string = StringVar()  # input string variable
 
     window.title("1-way 1-stack Deterministic Pushdown Automata")
-    window.geometry("1280x640")
+    window.geometry("1280x640")  # Dimensions
 
+    # File button
     file_button = Button(window, text="Open File", command=lambda: openFile(machine_text))
 
     # Controls
@@ -263,7 +233,6 @@ def create_window():
     run_button = Button(controls_frame, text="Run(Full speed)",
                         command=lambda: run_action(input_box, currentState_Label, steps_Label, traceInput_Label,
                                                    tracing_text, stack_Label))
-    # pause_button = Button(controls_frame, text="Pause", command=pause_action)
     step_button = Button(controls_frame, text="Step",
                          command=lambda: step_action(input_box, currentState_Label, steps_Label, traceInput_Label,
                                                      tracing_text, stack_Label))
@@ -277,19 +246,19 @@ def create_window():
 
     # Current State
     currentState_frame = LabelFrame(window, text="Current State")
-    currentState_Label = Label(currentState_frame, text="Placeholder")
+    currentState_Label = Label(currentState_frame, text="*")
 
     # Steps
     steps_frame = LabelFrame(window, text="Steps")
-    steps_Label = Label(steps_frame, text="Placeholder")
+    steps_Label = Label(steps_frame, text="0")
 
     # Input String
     traceInput_frame = LabelFrame(window, text="Input String")
-    traceInput_Label = Label(traceInput_frame, text="Placeholder")
+    traceInput_Label = Label(traceInput_frame, text="N/A")
 
     # Stack String
     stack_frame = LabelFrame(window, text="Stack")
-    stack_Label = Label(stack_frame, text="Placeholder")
+    stack_Label = Label(stack_frame, text="[]")
 
     # Machine
     machine_frame = LabelFrame(window, text="Machine")
@@ -308,15 +277,13 @@ def create_window():
     steps_frame.grid(row=10, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
     traceInput_frame.grid(row=0, column=3, rowspan=2, columnspan=17, padx=10, pady=10)
     stack_frame.grid(row=3, column=3, columnspan=17, padx=10, pady=10)
-    machine_frame.grid(row=5, rowspan=5, column=3, columnspan=7, padx=10, pady=10)
-    tracing_frame.grid(row=5, rowspan=5, column=12, columnspan=7, padx=10, pady=10)
+    machine_frame.grid(row=5, rowspan=7, column=3, columnspan=7, padx=10, pady=10)
+    tracing_frame.grid(row=5, rowspan=7, column=12, columnspan=7, padx=10, pady=10)
 
-    # Arrange buttons in a grid layout within the LabelFrame
+    # Arrange buttons in a grid layout within their own respective LabelFrame
     run_button.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
-    # pause_button.grid(row=0, column=1, padx=5, pady=5)
     step_button.grid(row=1, column=0, padx=5, pady=5)
     reset_button.grid(row=1, column=1, padx=5, pady=5)
-
     input_box.grid(row=0, column=0, padx=5, pady=5)
     currentState_Label.grid(row=0, column=0, padx=5, pady=5)
     steps_Label.grid(row=0, column=0, padx=5, pady=5)
@@ -324,16 +291,18 @@ def create_window():
     stack_Label.grid(row=0, column=0, padx=5, pady=5)
     machine_text.grid(row=0, column=0, padx=5, pady=5)
     tracing_text.grid(row=0, column=0, padx=5, pady=5)
+    tracing_text.config(width=60, height=20)
+    machine_text.config(width=60, height=20)
+    stack_Label.config(width=120)
+    traceInput_Label.config(width=120)
 
     # Shows the Window
     window.mainloop()
 
 
 def main():
-    print("Yo")
     create_window()
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     main()
