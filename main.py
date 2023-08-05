@@ -23,26 +23,67 @@ class dpda_machine:
         self.start_stack_symbol = start_stack_symbol
         self.accept_states = accept_states
 
-    def process_input(self, input_string, tracing_text):
+    def process_input(self, input_string, tracing_text, currentState_Label, steps_Label, traceInput_Label, stack_Label,
+                      time_step):
 
         self.current_state = self.start_state
         self.stack = [self.start_stack_symbol]
+        i = 0
+        string_to_show = input_string
 
+        # Update the initial labels and text
         tracing_text.insert(END, f"Starting State: {self.current_state}\n")
         tracing_text.insert(END, f"Starting Stack: {self.stack}\n")
         tracing_text.insert(END, f"Input String: \"{input_string}\" \n")
 
-        for symbol in input_string:
-            print(symbol)
-            # print("Stack: ", self.stack)
-            if self.current_state is None:
-                return False
+        currentState_Label.config(text=self.current_state)
+        steps_Label.config(text=i)
+        stack_Label.config(text=f"{self.stack}")
+        traceInput_Label.config(text=f"{string_to_show}")
+
+        # for symbol in input_string:
+        #     print(symbol)
+        #     # print("Stack: ", self.stack)
+        #     if self.current_state is None:
+        #         return False
+        #     stack_top = self.stack[-1] if self.stack else None
+        #     key = (self.current_state, symbol, stack_top)
+        #     # print("key and stack top", key, " ", stack_top)
+        #
+        #     if key not in self.transitions:
+        #         return False
+        #     next_state, push_to_stack = self.transitions[key]
+        #
+        #     self.stack.pop()
+        #     if push_to_stack != '':
+        #         for to_append in push_to_stack:
+        #             self.stack.append(to_append)
+        #     self.current_state = next_state
+        #
+        #     print("last check: current state ", self.current_state, "accept state: ", self.accept_states)
+        #     print("stack: ", self.stack)
+        #     tracing_text.insert(END, f"State: {self.current_state}, Input: {symbol} Stack on Top: {stack_top}\n")
+        #     currentState_Label.config(text=self.current_state)
+        #     steps_Label.config(text=i)
+        #     stack_Label.config(text=f"{self.stack}")
+
+        def process_loop():
+            nonlocal i, time_step
+
+            if i >= len(input_string):
+                print(f'String "{input_string}" is accepted.')
+                tracing_text.insert(END, f'String "{input_string}" is accepted. \n')
+                return
+
+            symbol = input_string[i]
             stack_top = self.stack[-1] if self.stack else None
             key = (self.current_state, symbol, stack_top)
-            # print("key and stack top", key, " ", stack_top)
 
             if key not in self.transitions:
-                return False
+                print(f'String "{input_string}" is not accepted.')
+                tracing_text.insert(END, f'String "{input_string}" is not accepted. \n')
+                return
+
             next_state, push_to_stack = self.transitions[key]
 
             self.stack.pop()
@@ -51,14 +92,25 @@ class dpda_machine:
                     self.stack.append(to_append)
             self.current_state = next_state
 
-            print("last check: current state ", self.current_state, "accept state: ", self.accept_states)
-            print("stack: ", self.stack)
-            tracing_text.insert(END, f"State: {self.current_state}, Input: {symbol} Stack on Top: {stack_top}\n")
+            tracing_text.insert(END, f"State: {self.current_state}, Input: {symbol}, Stack on Top: {stack_top}\n")
+            currentState_Label.config(text=self.current_state)
+            steps_Label.config(text=i)
+            stack_Label.config(text=f"{self.stack}")
 
-        if self.current_state == self.accept_states:
-            return True
-        else:
-            return False
+            i += 1
+            tracing_text.see(END)  # Scroll to the end of the Text widget
+            window.update()  # Update the GUI
+
+            # Schedule the next iteration after a delay (e.g., 1000ms)
+            window.after(time_step, process_loop)
+
+        # Start the processing loop
+        process_loop()
+
+        # if self.current_state == self.accept_states:
+        #     return True
+        # else:
+        #     return False
 
 
 def process_file_to_DPDA(dpda_data):
@@ -146,46 +198,51 @@ def openFile(machine_text):
     machine_text.insert(1.0, text_to_insert)
 
 
-def run_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text):
+def run_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text, stack_Label):
     print("Run button clicked!")
 
     input_string = input_box.get()
     input_string_for_process = input_string + " "
     print(input_string)
 
-    if dpda_Machine.process_input(input_string_for_process, tracing_text):
-        print(f'String "{input_string}" is accepted.')
-        tracing_text.insert(END, f'String "{input_string}" is accepted. \n')
-    else:
-        print(f'String "{input_string}" is not accepted.')
-        tracing_text.insert(END, f'String "{input_string}" is not accepted. \n')
+    dpda_Machine.process_input(input_string_for_process, tracing_text, currentState_Label, steps_Label,
+                               traceInput_Label, stack_Label, 0)
+    #     print(f'String "{input_string}" is accepted.')
+    #     tracing_text.insert(END, f'String "{input_string}" is accepted. \n')
+    # else:
+    #     print(f'String "{input_string}" is not accepted.')
+    #     tracing_text.insert(END, f'String "{input_string}" is not accepted. \n')
 
 
 def pause_action():
     print("Pause button clicked!")
 
 
-def step_action():
+def step_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text, stack_Label):
     print("Step button clicked!")
 
+    input_string = input_box.get()
+    input_string_for_process = input_string + " "
+    print(input_string)
 
-def reset_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text):
+    dpda_Machine.process_input(input_string_for_process, tracing_text, currentState_Label, steps_Label,
+                               traceInput_Label, stack_Label, 1000)
+
+
+def reset_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text, stack_Label):
     print("Reset button clicked!")
-
     if input_box.get().strip():
         input_box.delete(0, END)
-    if tracing_text.get(1.0,END).strip():
+    if tracing_text.get(1.0, END).strip():
         tracing_text.delete(1.0, END)
+    currentState_Label.config(text="")
+    steps_Label.config(text="")
+    traceInput_Label.config(text="")
+    stack_Label.config(text="")
 
 
-    # currentState_Label.delete(1.0, END)
-    # steps_Label.delete(1.0, END)
-    # traceInput_Label.delete(1.0, END)
-
-
-
-def enter_action():
-    print("Enter Button Clicked!")
+# def enter_action():
+#     print("Enter Button Clicked!")
 
 
 ###########################################################################
@@ -201,14 +258,16 @@ def create_window():
 
     # Controls
     controls_frame = LabelFrame(window, text="Controls")
-    run_button = Button(controls_frame, text="Run",
+    run_button = Button(controls_frame, text="Run(Full speed)",
                         command=lambda: run_action(input_box, currentState_Label, steps_Label, traceInput_Label,
-                                                   tracing_text))
-    pause_button = Button(controls_frame, text="Pause", command=pause_action)
-    step_button = Button(controls_frame, text="Step", command=step_action)
+                                                   tracing_text, stack_Label))
+    # pause_button = Button(controls_frame, text="Pause", command=pause_action)
+    step_button = Button(controls_frame, text="Step",
+                         command=lambda: step_action(input_box, currentState_Label, steps_Label, traceInput_Label,
+                                                     tracing_text, stack_Label))
     reset_button = Button(controls_frame, text="Reset",
                           command=lambda: reset_action(input_box, currentState_Label, steps_Label, traceInput_Label,
-                                                       tracing_text))
+                                                       tracing_text, stack_Label))
 
     # Input String
     input_frame = LabelFrame(window, text="Please input the string:")
@@ -251,8 +310,8 @@ def create_window():
     tracing_frame.grid(row=5, rowspan=5, column=12, columnspan=7, padx=10, pady=10)
 
     # Arrange buttons in a grid layout within the LabelFrame
-    run_button.grid(row=0, column=0, padx=5, pady=5)
-    pause_button.grid(row=0, column=1, padx=5, pady=5)
+    run_button.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+    #pause_button.grid(row=0, column=1, padx=5, pady=5)
     step_button.grid(row=1, column=0, padx=5, pady=5)
     reset_button.grid(row=1, column=1, padx=5, pady=5)
 
