@@ -68,7 +68,7 @@ class dpda_machine:
         #     stack_Label.config(text=f"{self.stack}")
 
         def process_loop():
-            nonlocal i, time_step
+            nonlocal i, time_step, string_to_show
 
             if i >= len(input_string):
                 print(f'String "{input_string}" is accepted.')
@@ -92,10 +92,12 @@ class dpda_machine:
                     self.stack.append(to_append)
             self.current_state = next_state
 
+            string_to_show = input_string[i:]
             tracing_text.insert(END, f"State: {self.current_state}, Input: {symbol}, Stack on Top: {stack_top}\n")
             currentState_Label.config(text=self.current_state)
             steps_Label.config(text=i)
             stack_Label.config(text=f"{self.stack}")
+            traceInput_Label.config(text=f"{string_to_show}")
 
             i += 1
             tracing_text.see(END)  # Scroll to the end of the Text widget
@@ -282,7 +284,7 @@ def create_window():
     steps_Label = Label(steps_frame, text="Placeholder")
 
     # Input String
-    traceInput_frame = LabelFrame(window, text="Input String(idk wtf this is yet)")
+    traceInput_frame = LabelFrame(window, text="Input String")
     traceInput_Label = Label(traceInput_frame, text="Placeholder")
 
     # Stack String
@@ -311,7 +313,7 @@ def create_window():
 
     # Arrange buttons in a grid layout within the LabelFrame
     run_button.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
-    #pause_button.grid(row=0, column=1, padx=5, pady=5)
+    # pause_button.grid(row=0, column=1, padx=5, pady=5)
     step_button.grid(row=1, column=0, padx=5, pady=5)
     reset_button.grid(row=1, column=1, padx=5, pady=5)
 

@@ -23,13 +23,13 @@ class dpda_machine:
         self.stack = [self.start_stack_symbol]
 
         for symbol in input_string:
-            #print(symbol)
+            print(symbol)
             #print("Stack: ", self.stack)
             if self.current_state is None:
                 return False
             stack_top = self.stack[-1] if self.stack else None
             key = (self.current_state, symbol, stack_top)
-            #print("key and stack top", key, " ", stack_top)
+            print("key and stack top", key, " ", stack_top)
             if key not in self.transitions:
                 return False
             next_state, push_to_stack = self.transitions[key]
@@ -40,8 +40,8 @@ class dpda_machine:
                     self.stack.append(to_append)
             self.current_state = next_state
 
-            #print("last check: current state ", self.current_state, "accept state: ", self.accept_states)
-            #print("stack: ", self.stack)
+            print("last check: current state ", self.current_state, "accept state: ", self.accept_states)
+            print("stack: ", self.stack)
 
         if self.current_state == self.accept_states:
             return True
