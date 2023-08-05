@@ -140,9 +140,19 @@ def openFile(machine_text):
     machine_text.insert(1.0, text_to_insert)
 
 
-def run_action(machine_text):
+def run_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text):
     print("Run button clicked!")
-    machine_text.insert("1.0", dpdaFile_data)
+
+    input_string = input_box.get()
+    input_string_for_process = input_string + " "
+    print(input_string)
+
+    if dpda_Machine.process_input(input_string_for_process):
+        print(f'String "{input_string}" is accepted.')
+        tracing_text.insert(1.0, f'String "{input_string}" is accepted. \n')
+    else:
+        print(f'String "{input_string}" is not accepted.')
+        tracing_text.insert(1.0, f'String "{input_string}" is not accepted. \n')
 
 
 def pause_action():
@@ -153,8 +163,19 @@ def step_action():
     print("Step button clicked!")
 
 
-def reset_action():
+def reset_action(input_box, currentState_Label, steps_Label, traceInput_Label, tracing_text):
     print("Reset button clicked!")
+
+    if input_box.get().strip():
+        input_box.delete(0, END)
+    if tracing_text.get(1.0,END).strip():
+        tracing_text.delete(1.0, END)
+
+
+    # currentState_Label.delete(1.0, END)
+    # steps_Label.delete(1.0, END)
+    # traceInput_Label.delete(1.0, END)
+
 
 
 def enter_action():
@@ -168,16 +189,20 @@ def create_window():
     input_string = StringVar()
 
     window.title("1-way 1-stack Deterministic Pushdown Automata")
-    window.geometry("864x640")
+    window.geometry("1280x640")
 
     file_button = Button(window, text="Open File", command=lambda: openFile(machine_text))
 
     # Controls
     controls_frame = LabelFrame(window, text="Controls")
-    run_button = Button(controls_frame, text="Run", command=lambda: run_action(machine_text))
+    run_button = Button(controls_frame, text="Run",
+                        command=lambda: run_action(input_box, currentState_Label, steps_Label, traceInput_Label,
+                                                   tracing_text))
     pause_button = Button(controls_frame, text="Pause", command=pause_action)
     step_button = Button(controls_frame, text="Step", command=step_action)
-    reset_button = Button(controls_frame, text="Reset", command=reset_action)
+    reset_button = Button(controls_frame, text="Reset",
+                          command=lambda: reset_action(input_box, currentState_Label, steps_Label, traceInput_Label,
+                                                       tracing_text))
 
     # Input String
     input_frame = LabelFrame(window, text="Please input the string:")
