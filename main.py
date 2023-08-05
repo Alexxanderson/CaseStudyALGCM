@@ -23,10 +23,14 @@ class dpda_machine:
         self.start_stack_symbol = start_stack_symbol
         self.accept_states = accept_states
 
-    def process_input(self, input_string):
+    def process_input(self, input_string, tracing_text):
 
         self.current_state = self.start_state
         self.stack = [self.start_stack_symbol]
+
+        tracing_text.insert(END, f"Starting State: {self.current_state}\n")
+        tracing_text.insert(END, f"Starting Stack: {self.stack}\n")
+        tracing_text.insert(END, f"Input String: \"{input_string}\" \n")
 
         for symbol in input_string:
             print(symbol)
@@ -35,7 +39,8 @@ class dpda_machine:
                 return False
             stack_top = self.stack[-1] if self.stack else None
             key = (self.current_state, symbol, stack_top)
-            print("key and stack top", key, " ", stack_top)
+            # print("key and stack top", key, " ", stack_top)
+
             if key not in self.transitions:
                 return False
             next_state, push_to_stack = self.transitions[key]
@@ -48,6 +53,7 @@ class dpda_machine:
 
             print("last check: current state ", self.current_state, "accept state: ", self.accept_states)
             print("stack: ", self.stack)
+            tracing_text.insert(END, f"State: {self.current_state}, Input: {symbol} Stack on Top: {stack_top}\n")
 
         if self.current_state == self.accept_states:
             return True
@@ -55,14 +61,14 @@ class dpda_machine:
             return False
 
 
-def process_file_to_DPDA(dpdaFile_data):
-    states = set(dpdaFile_data['States'])
-    alphabet_inputs = set(dpdaFile_data['Alphabet Inputs'])
-    stack_alphabets = set(dpdaFile_data['Stack Alphabets'])
-    start_state = dpdaFile_data['Start State'][0]
-    starting_stack_symbol = dpdaFile_data['Starting Stack Symbol'][0]
-    final_state = dpdaFile_data['Final States'][0]
-    transitionsRaw_list = dpdaFile_data['Transitions']  # DONT REMOVE PROBABLY WILL BE USEFUL FOR FRONTEND
+def process_file_to_DPDA(dpda_data):
+    states = set(dpda_data['States'])
+    alphabet_inputs = set(dpda_data['Alphabet Inputs'])
+    stack_alphabets = set(dpda_data['Stack Alphabets'])
+    start_state = dpda_data['Start State'][0]
+    starting_stack_symbol = dpda_data['Starting Stack Symbol'][0]
+    final_state = dpda_data['Final States'][0]
+    transitionsRaw_list = dpda_data['Transitions']  # DONT REMOVE PROBABLY WILL BE USEFUL FOR FRONTEND
 
     # print(transitionsRaw_list)
 
@@ -147,12 +153,12 @@ def run_action(input_box, currentState_Label, steps_Label, traceInput_Label, tra
     input_string_for_process = input_string + " "
     print(input_string)
 
-    if dpda_Machine.process_input(input_string_for_process):
+    if dpda_Machine.process_input(input_string_for_process, tracing_text):
         print(f'String "{input_string}" is accepted.')
-        tracing_text.insert(1.0, f'String "{input_string}" is accepted. \n')
+        tracing_text.insert(END, f'String "{input_string}" is accepted. \n')
     else:
         print(f'String "{input_string}" is not accepted.')
-        tracing_text.insert(1.0, f'String "{input_string}" is not accepted. \n')
+        tracing_text.insert(END, f'String "{input_string}" is not accepted. \n')
 
 
 def pause_action():
