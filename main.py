@@ -20,7 +20,7 @@ dpda_Machine = ""
 
 # 1-way 1-Stack Deterministic Pushdown Automata Class
 class dpda_machine:
-    def __init__(self, states, alphabet, stack_alphabet, transitions, start_state, start_stack_symbol, accept_states):
+    def __init__(self, states, alphabet, stack_alphabet, transitions, start_state, start_stack_symbol, accept_state):
         self.current_state = None  # Current State, utilized on process
         self.stack = None  # Current Stack, utilized on process
         self.states = states  # Set of Possible States
@@ -29,7 +29,7 @@ class dpda_machine:
         self.transitions = transitions  # Set of Transitions
         self.start_state = start_state  # Start State
         self.start_stack_symbol = start_stack_symbol  # Starting Stack Symbol
-        self.accept_states = accept_states  # Final state
+        self.accept_state = accept_state  # Final state
 
     # Processes the string of input and outputs if it is accepted or rejected based on the DPDA Design
     def process_input(self, input_string, tracing_text, currentState_Label, steps_Label, traceInput_Label, stack_Label,
@@ -44,7 +44,6 @@ class dpda_machine:
         tracing_text.insert(END, f"Starting State: {self.current_state}\n")
         tracing_text.insert(END, f"Starting Stack: {self.stack}\n")
         tracing_text.insert(END, f"Input String: \"{input_string}\" \n")
-
         currentState_Label.config(text=self.current_state)
         steps_Label.config(text=i)
         stack_Label.config(text=f"{self.stack}")
@@ -53,9 +52,17 @@ class dpda_machine:
         def process_loop():
             nonlocal i, time_step, string_to_show
 
+            print(i)
+            print(len(input_string))
+            print(self.current_state, " ", self.accept_state)
+
             if i >= len(input_string):
-                print(f'String "{input_string}" is accepted.')
-                tracing_text.insert(END, f'String "{input_string}" is accepted. \n')
+                if self.current_state == self.accept_state:
+                    print(f'String "{input_string}" is accepted.')
+                    tracing_text.insert(END, f'String "{input_string}" is accepted. \n')
+                else:
+                    print(f'String "{input_string}" is not accepted.')
+                    tracing_text.insert(END, f'String "{input_string}" is not accepted. \n')
                 return
 
             symbol = input_string[i]
@@ -163,7 +170,7 @@ def openFile(machine_text):
         f"Stack Alphabets: {dpda_Machine.stack_alphabet}\n"
         f"Start State: {dpda_Machine.start_state}\n"
         f"Starting Stack Symbol: {dpda_Machine.start_stack_symbol}\n"
-        f"Final States: {dpda_Machine.accept_states}\n"
+        f"Final States: {dpda_Machine.accept_state}\n"
         f"Transitions:\n"
     )
 
