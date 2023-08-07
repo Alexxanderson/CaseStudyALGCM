@@ -20,7 +20,7 @@ dpda_Machine = ""
 
 # 1-way 1-Stack Deterministic Pushdown Automata Class
 class dpda_machine:
-    def __init__(self, states, alphabet, stack_alphabet, transitions, start_state, start_stack_symbol, accept_state):
+    def __init__(self, states, alphabet, stack_alphabet, transitions, start_state, start_stack_symbol, accept_state, details):
         self.current_state = None  # Current State, utilized on process
         self.stack = None  # Current Stack, utilized on process
         self.states = states  # Set of Possible States
@@ -30,6 +30,7 @@ class dpda_machine:
         self.start_state = start_state  # Start State
         self.start_stack_symbol = start_stack_symbol  # Starting Stack Symbol
         self.accept_state = accept_state  # Final state
+        self.details = details
 
     # Processes the string of input and outputs if it is accepted or rejected based on the DPDA Design
     def process_input(self, input_string, tracing_text, currentState_Label, steps_Label, traceInput_Label, stack_Label,
@@ -43,7 +44,7 @@ class dpda_machine:
         # Update the initial labels and text
         tracing_text.insert(END, f"Starting State: {self.current_state}\n")
         tracing_text.insert(END, f"Starting Stack: {self.stack}\n")
-        tracing_text.insert(END, f"Input String: \"{input_string}\" \n")
+        tracing_text.insert(END, f"Input String: \"{input_string.split()}\" \n")
         currentState_Label.config(text=self.current_state)
         steps_Label.config(text=i)
         stack_Label.config(text=f"{self.stack}")
@@ -59,10 +60,10 @@ class dpda_machine:
             if i >= len(input_string):
                 if self.current_state == self.accept_state:
                     print(f'String "{input_string}" is accepted.')
-                    tracing_text.insert(END, f'String "{input_string}" is accepted. \n')
+                    tracing_text.insert(END, f'String "{input_string.split()}" is accepted. \n')
                 else:
                     print(f'String "{input_string}" is not accepted.')
-                    tracing_text.insert(END, f'String "{input_string}" is not accepted. \n')
+                    tracing_text.insert(END, f'String "{input_string.split()}" is not accepted. \n')
                 return
 
             symbol = input_string[i]
@@ -70,8 +71,8 @@ class dpda_machine:
             key = (self.current_state, symbol, stack_top)
 
             if key not in self.transitions:
-                print(f'String "{input_string}" is not accepted.')
-                tracing_text.insert(END, f'String "{input_string}" is not accepted. \n')
+                print(f'String "{input_string.split()}" is not accepted.')
+                tracing_text.insert(END, f'String "{input_string.split()}" is not accepted. \n')
                 return
 
             next_state, push_to_stack = self.transitions[key]
@@ -102,6 +103,7 @@ class dpda_machine:
 
 # Function used to instantiate the DPDA design based from the processed .txt file
 def process_file_to_DPDA(dpda_data):
+    details = set(dpda_data['Details'])
     states = set(dpda_data['States'])
     alphabet_inputs = set(dpda_data['Alphabet Inputs'])
     stack_alphabets = set(dpda_data['Stack Alphabets'])
@@ -129,7 +131,7 @@ def process_file_to_DPDA(dpda_data):
 
     # Creation of DPDA
     dpda_machine_1 = dpda_machine(states, alphabet_inputs, stack_alphabets, transitions, start_state,
-                                  starting_stack_symbol, final_state)
+                                  starting_stack_symbol, final_state, details)
     return dpda_machine_1
 
 
@@ -165,6 +167,7 @@ def openFile(machine_text):
     dpda_Machine = process_file_to_DPDA(dpdaFile_data)
 
     text_to_insert = (
+        f"Details: \n {dpda_Machine.details}\n"
         f"States: {dpda_Machine.states}\n"
         f"Alphabet Inputs: {dpda_Machine.alphabet}\n"
         f"Stack Alphabets: {dpda_Machine.stack_alphabet}\n"

@@ -1,10 +1,13 @@
+Details:
+Accepts a string with a balanced pair of parenthesis
+
 States:
 q0
 q1
 
 Alphabet Inputs:
-a
-b
+(
+)
 
 Stack Alphabets:
 X
@@ -20,7 +23,7 @@ Final States:
 q1
 
 Transitions:
-q0,a,Z,q0,ZX
-q0,a,X,q0,XX
-q0,b,X,q0,
+q0,(,Z,q0,ZX
+q0,(,X,q0,XX
+q0,),X,q0,
 q0, ,Z,q1,

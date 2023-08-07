@@ -1,0 +1,38 @@
+Details:
+accepts all strings from the set {0, 1} such that it contains at least an instance of 010 or 11 as a substring.
+
+States:
+q0
+q1
+q2
+q3
+q4
+
+Alphabet Inputs:
+1
+0
+
+Stack Alphabets:
+Z
+
+Start State:
+q0
+
+Starting Stack Symbol:
+Z
+
+Final States:
+q4
+
+Transitions:
+q0,0,Z,q1,Z
+q0,1,Z,q2,Z
+q1,0,Z,q1,Z
+q1,1,Z,q3,Z
+q2,0,Z,q1,Z
+q2,1,Z,q4,Z
+q3,0,Z,q4,Z
+q3,1,Z,q4,Z
+q4,0,Z,q4,Z
+q4,1,Z,q4,Z
+q4, ,Z,q4,

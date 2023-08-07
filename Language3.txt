@@ -1,0 +1,33 @@
+Details:
+accepts all strings from the set {a, b} | a^n b^n (a balanced number of 'a' and 'b')
+
+States:
+q0
+q1
+q2
+
+Alphabet Inputs:
+a
+b
+
+Stack Alphabets:
+X
+Z
+
+Start State:
+q0
+
+Starting Stack Symbol:
+Z
+
+Final States:
+q2
+
+Transitions:
+q0,a,Z,q0,ZX
+q0,a,X,q0,XX
+q0,b,X,q1,
+q0, ,Z,q2,
+q1,b,X,q1,
+q1, ,Z,q2,
+
